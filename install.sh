@@ -1,5 +1,19 @@
 #!/bin/bash
 
+if [ -z $1 ];then
+    echo "please input install path"
+    echo "eg:"
+    echo "$0 ."
+    echo "$0 ~"
+    exit 1
+fi
+
+SCRIPT_DIR=$(realpath ${BASH_SOURCE[0]} | xargs dirname)
+
+TARGET_PATH=$(realpath $1)
+DEST=${SCRIPT_DIR}
+LOG_SUBPATH="."
+
 display_log() {
 	# log function parameters to install.log
 	[[ -n "${DEST}" ]] && echo "Displaying message: $@" >> "${DEST}"/${LOG_SUBPATH}/output.log
@@ -125,11 +139,12 @@ function interactive_config_install_vim_plugs() {
 	fi
 }
 
-# TARGET_PATH=$HOME
-TARGET_PATH="."
 
 interactive_config_prepare_terminal
 
+if [ -f ${DEST}/${LOG_SUBPATH}/output.log ];then
+    mv ${DEST}/${LOG_SUBPATH}/output.log ${DEST}/${LOG_SUBPATH}/output.log.bak
+fi
 
 ##################################################################################################
 display_log "Start installing dependent software"
@@ -159,7 +174,7 @@ case ${REGIONAL_MIRROR} in
 esac
 
 
-
+##################################################################################################
 display_log "Start configuring zsh"
 
 interactive_config_default_shell
@@ -167,38 +182,60 @@ if [ x"${USE_ZSH_DEFAULT_SHELL}" == x"yes" ];then
     chsh -s $(which zsh)
 fi
 
-# download oh-my-zsh
-if [ x"${REGIONAL_MIRROR}" == x"github" ];then
-    curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh > install_zsh.sh
-    ZSH=${TARGET_PATH}/.oh-my-zsh sh install_zsh.sh --unattended
-    rm install_zsh.sh
-else
-    curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install.sh > install_zsh.sh
-    ZSH=${TARGET_PATH}/.oh-my-zsh REPO=mirrors/oh-my-zsh REMOTE=https://gitee.com/mirrors/oh-my-zsh.git sh install_zsh.sh --unattended
-    rm install_zsh.sh
+if [ -d ${TARGET_PATH}/.oh-my-zsh ];then
+    display_log "oh-my-zsh has been installed"
+    display_log "you can just remove it with \`rm -r ${TARGET_PATH}/.oh-my-zsh\`"
+
+    read -p "Are you sure to remove oh-my-zsh? select 'n' to skip configuring zsh [y/n] " input
+    case $input in
+        [yY]*)
+            display_log "remove ${TARGET_PATH}/.oh-my-zsh"
+            # rm -rf ${TARGET_PATH}/.oh-my-zsh
+            ;;
+        [nN]*)
+            display_log "skip configuring zsh"
+            SKTP_ZSH_CONFIG="yes"
+            ;;
+        *)
+            echo "Just enter y or n, please."
+            exit 1
+            ;;
+    esac
 fi
 
-# install oh-my-zsh plugs
-if [ x"${REGIONAL_MIRROR}" == x"github" ];then
-    # zsh-autosuggestions
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-    # zsh-syntax-highlighting
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-    # powerlevel10k
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/themes/powerlevel10k
-else
-    # zsh-autosuggestions
-    git clone https://gitee.com/imirror/zsh-autosuggestions ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-    # zsh-syntax-highlighting
-    git clone https://gitee.com/NU-LL/zsh-syntax-highlighting ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-    # powerlevel10k
-    git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/themes/powerlevel10k
-fi
+if [ x"${SKTP_ZSH_CONFIG}" != x"yes" ];then
+    display_log "download oh-my-zsh from ${REGIONAL_MIRROR}"
+    if [ x"${REGIONAL_MIRROR}" == x"github" ];then
+        curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh > install_zsh.sh
+        ZSH=${TARGET_PATH}/.oh-my-zsh sh install_zsh.sh --unattended
+        rm install_zsh.sh
+    else
+        curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install.sh > install_zsh.sh
+        ZSH=${TARGET_PATH}/.oh-my-zsh REPO=mirrors/oh-my-zsh REMOTE=https://gitee.com/mirrors/oh-my-zsh.git sh install_zsh.sh --unattended
+        rm install_zsh.sh
+    fi
 
-# set .zshrc
-sed -i "s/^ZSH_THEME=.*$/ZSH_THEME=\"powerlevel10k\/powerlevel10k\"/g" ${TARGET_PATH}/.zshrc
-sed -i "s/^plugins=/# plugins=/g" ${TARGET_PATH}/.zshrc
-context='\
+    # install oh-my-zsh plugs
+    if [ x"${REGIONAL_MIRROR}" == x"github" ];then
+        # zsh-autosuggestions
+        git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+        # zsh-syntax-highlighting
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+        # powerlevel10k
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/themes/powerlevel10k
+    else
+        # zsh-autosuggestions
+        git clone https://gitee.com/imirror/zsh-autosuggestions ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+        # zsh-syntax-highlighting
+        git clone https://gitee.com/NU-LL/zsh-syntax-highlighting ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+        # powerlevel10k
+        git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-${TARGET_PATH}/.oh-my-zsh/custom}/themes/powerlevel10k
+    fi
+
+    # set .zshrc
+    sed -i "s/^ZSH_THEME=.*$/ZSH_THEME=\"powerlevel10k\/powerlevel10k\"/g" ${TARGET_PATH}/.zshrc
+    sed -i "s/^plugins=/# plugins=/g" ${TARGET_PATH}/.zshrc
+    context='\
 plugins=(\
 git\
 z\
@@ -223,8 +260,8 @@ bindkey \"^[[1;2C\" insert-cycledright\
 \
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=\"fg=6\"\
 '
-sed -i "/^# plugins=/a ${context}" ${TARGET_PATH}/.zshrc
-
+    sed -i "/^# plugins=/a ${context}" ${TARGET_PATH}/.zshrc
+fi
 
 
 ##################################################################################################
