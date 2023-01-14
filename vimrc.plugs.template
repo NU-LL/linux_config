@@ -1,0 +1,73 @@
+
+
+
+" ===================================================
+" ==================== VIM PLUGS ====================
+" ===================================================
+call plug#begin()
+
+    Plug 'yianwillis/vimcdoc'
+    Plug 'preservim/nerdtree'
+    Plug 'preservim/nerdcommenter'
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+
+call plug#end()
+
+
+" ================== NERDTree Config ==================
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
+
+
+" ================== nerdcommenter Config ==================
+let g:NERDTreeShowHidden=1
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+" Set a language to use its alternate delimiters by default
+let g:NERDAltDelims_java = 1
+" Add your own custom formats or override the defaults
+let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+" Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+" Enable NERDCommenterToggle to check all selected lines is commented or not
+let g:NERDToggleCheckAllLines = 1
+" \cc 注释当前行和选中行
+" \cn 没有发现和\cc有区别
+" \c<空格> 如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作
+" \cm 对被选区域用一对注释符进行注释，前面的注释对每一行都会添加注释
+" \ci 执行反转注释操作，选中区域注释部分取消注释，非注释部分添加注释
+" \cs 添加性感的注释，代码开头介绍部分通常使用该注释
+" \cy 添加注释，并复制被添加注释的部分
+" \c$ 注释当前光标到改行结尾的内容
+" \cA 跳转到该行结尾添加注释，并进入编辑模式
+" \ca 转换注释的方式，比如：/**/和//
+" \cl \cb 左对齐和左右对其，左右对其主要针对/**/
+" \cu 取消注释
+
+
+" ================== vim-airline Config ==================
+set laststatus=2  "永远显示状态栏
+let g:airline_powerline_fonts = 1  " 支持 powerline 字体
+let g:airline#extensions#tabline#enabled = 1 " 显示窗口tab和buffer
+let g:airline_theme='murmur'  " murmur配色不错
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+let g:airline_left_sep = '▶'
+let g:airline_left_alt_sep = '❯'
+let g:airline_right_sep = '◀'
+let g:airline_right_alt_sep = '❮'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+
+
+

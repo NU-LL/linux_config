@@ -1,0 +1,90 @@
+let mapleader=" "
+
+" 部分插件需要开启
+set nocompatible " 不兼容 vi 操作
+filetype on
+filetype indent on
+filetype plugin on
+filetype plugin indent on
+
+set number " 显示行号
+set showcmd " 显示完整命令
+set relativenumber " 显示相对行号（这个非常重要，慢慢体会）
+set incsearch " 边搜索边高亮
+exec "nohlsearch"
+set hlsearch " 搜索结果高亮
+"set ignorecase " 搜索时忽略大小写
+set smartcase " 搜索时启用智能大小写匹配
+set autoindent " 自动缩进
+set smartindent " 智能缩进
+set tabstop=4 " 设置 tab 制表符所占宽度为 4
+set softtabstop=4 " 设置按 tab 时缩进的宽度为 4
+set shiftwidth=4 " 设置自动缩进宽度为 4
+set expandtab " 缩进时将 tab 制表符转换为空格
+set mouse= " 关闭鼠标功能
+"set mouse=a " 启用全部鼠标功能
+set wildmenu " 启用选项菜单
+set cursorline " 启用下划线
+set wrap " 文本过长时换行
+
+set fileencodings=utf8,cp936,gb18030,big5 " 尝试按照这些编码方式逐一探测
+filetype on " 开启文件类型检测
+syntax on " 开启语法高亮
+
+set encoding=utf-8
+let &t_ut='' " 避免部分终端配色问题
+set list " 显示行尾空格
+set listchars=tab:▸\ ,trail:▫
+set scrolloff=5 " 光标上下两侧最少保留的屏幕行数
+set textwidth=0 " 复制时的最长文本宽度
+set indentexpr=
+set backspace=indent,eol,start " backspace 能够删除到行尾
+set foldmethod=indent " 当前窗口使用的折叠方式
+set foldlevel=99 " 设置折叠级别: 高于此级别的折叠会被关闭
+let &t_SI = "\<Esc>]50;CursorShape=1\x7" " 修改不同模式下的光标，会受到终端影响
+let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+set laststatus=2 " 总是存在状态行
+set autochdir " 在打开文件、切换缓冲区、删除缓冲区或者打开/关闭窗口时改变当前工作目录的值
+
+" 记住上次编辑的位置
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+
+" 搜索时跳转
+nnoremap = nzz
+nnoremap - Nzz
+nnoremap <LEADER><CR> :nohlsearch<CR>
+
+nnoremap Q :q<CR>
+nnoremap s <nop> " s在默认情况是删掉当前字符并进入插入模式，为防止误删，可利用将其取消。nop：no operation
+nnoremap S :w<CR> " 用S代替:w回车
+nnoremap <C-s>  :w<CR>
+nnoremap R :source $MYVIMRC<CR>
+
+" 分屏操作
+nnoremap sh :set nosplitright<CR>:vsplit<CR>
+nnoremap sl :set splitright<CR>:vsplit<CR>
+nnoremap sj :set splitbelow<CR>:split<CR>
+nnoremap sk :set nosplitbelow<CR>:split<CR>
+" 分屏横竖切换
+nnoremap sv <C-w>t<C-w>H
+nnoremap sp <C-w>t<C-w>K
+" 分屏光标切换
+nnoremap <LEADER>h  <C-w>h
+nnoremap <LEADER>l  <C-w>l
+nnoremap <LEADER>j  <C-w>j
+nnoremap <LEADER>k  <C-w>k
+nnoremap <LEADER>c  <C-w>c
+" 分屏大小设置
+nnoremap <LEADER><up>   :res +5<CR>
+nnoremap <LEADER><down>   :res -5<CR>
+nnoremap <LEADER><left>   :vertical res -5<CR>
+nnoremap <LEADER><right>   :vertical res +5<CR>
+
+" 标签操作
+nnoremap gy :tabe<CR>
+nnoremap gr :tabprevious<CR>
+" 默认 gt 切换下一个
+
+
