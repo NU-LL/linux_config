@@ -9,8 +9,19 @@ call plug#begin()
     Plug 'yianwillis/vimcdoc'
     Plug 'preservim/nerdtree'
     Plug 'preservim/nerdcommenter'
+
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
+
+    Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
+
+    Plug 'tpope/vim-fugitive'
+    Plug 'mhinz/vim-signify'
+    Plug 'gisphm/vim-gitignore', { 'for': ['gitignore', 'vim-plug'] }
+
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+    Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 
 call plug#end()
 
@@ -69,5 +80,14 @@ let g:airline_right_alt_sep = '❮'
 let g:airline_symbols.linenr = '¶'
 let g:airline_symbols.branch = '⎇'
 
+
+" ================== vim-which-key Config ==================
+nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
+nnoremap <silent> s :WhichKey 's'<CR>
+
+
+" ================== LeaderF Config ==================
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewInPopup = 1
 
 

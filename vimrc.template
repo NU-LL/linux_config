@@ -26,6 +26,7 @@ set mouse= " 关闭鼠标功能
 set wildmenu " 启用选项菜单
 set cursorline " 启用下划线
 set wrap " 文本过长时换行
+set updatetime=1000
 
 set fileencodings=utf8,cp936,gb18030,big5 " 尝试按照这些编码方式逐一探测
 filetype on " 开启文件类型检测
@@ -56,11 +57,46 @@ nnoremap = nzz
 nnoremap - Nzz
 nnoremap <LEADER><CR> :nohlsearch<CR>
 
+" system
+nnoremap K 5k<CR>
+nnoremap J 5j<CR>
+nnoremap H 0
+nnoremap L $
+" Faster in-line navigation
+noremap W 5w
+noremap B 5b
 nnoremap Q :q<CR>
-nnoremap s <nop> " s在默认情况是删掉当前字符并进入插入模式，为防止误删，可利用将其取消。nop：no operation
-nnoremap S :w<CR> " 用S代替:w回车
+" Duplicate words
+map <LEADER>fd /\(\<\w\+\>\)\_s*\1
+
+" Spelling Check with <space>sc
+" [s: left error
+" ]s: right error
+" z=: replace
+nnoremap <LEADER>sc :set spell!<CR>
+noremap <C-x> ea<C-x>s
+inoremap <C-x> <Esc>ea<C-x>s
+" cmd
+nnoremap ; :
+nnoremap <LEADER>/ :!
+nnoremap <LEADER>r :r !
+nnoremap <LEADER>sr :%s/
+nnoremap <LEADER>rc :e ~/.vimrc<CR>
+" s 在默认情况是删掉当前字符并进入插入模式，为防止误删，可将其取消
+nnoremap s <nop>
+nnoremap S :w<CR>
 nnoremap <C-s>  :w<CR>
 nnoremap R :source $MYVIMRC<CR>
+" Press space twice to jump to the next '<++>' and edit it
+"nnoremap <LEADER><LEADER> <Esc>/<++><CR>:nohlsearch<CR>c4l
+function! SearchPlusPlus()
+    call search("<++>", 'w')
+endfunction
+nnoremap <LEADER><LEADER> <Esc>:call SearchPlusPlus()<CR>c4l
+
+
+" Call figlet
+nnoremap tx :r !figlet
 
 " 分屏操作
 nnoremap sh :set nosplitright<CR>:vsplit<CR>
@@ -86,5 +122,4 @@ nnoremap <LEADER><right>   :vertical res +5<CR>
 nnoremap gy :tabe<CR>
 nnoremap gr :tabprevious<CR>
 " 默认 gt 切换下一个
-
 
